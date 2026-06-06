@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,37 +8,63 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <style>
+  /* ── Light theme (default) ── */
   :root {
+    --ink:#111113; --ink-2:#6b6b70; --ink-3:#9a9aa0; --ink-4:#cfcfd2;
+    --line:#e7e7e4; --line-2:#f0f0ed; --bg:#ffffff; --bg-soft:#f5f5f3; --bg-card:#ffffff;
+    --on-ink:#ffffff;
+    --nav-bg:rgba(255,255,255,.82);
+    --glow-a:rgba(17,17,19,.04); --glow-b:rgba(17,17,19,.022);
+    --stage-glow:rgba(17,17,19,.05);
+    --hover-border:#d4d4d1; --hover-bg:#f5f5f3;
+    --feat-hover-border:#d8d8d5; --feat-hover-bg:#f8f8f6;
+    --ptrack-bg:#e7e7e3;
+    --closer-glow:rgba(17,17,19,.04);
+    --navadd-shadow:rgba(17,17,19,.22);
+    --pro-bg:linear-gradient(180deg,#fbfbfa,#f4f4f2); --pro-border:#111113;
+    --ui:'Geist','-apple-system',system-ui,sans-serif;
+    --mono:'Geist Mono',ui-monospace,'SF Mono',monospace;
+    --max:1120px; --r:18px; --r-sm:12px;
+  }
+
+  /* ── Dark theme ── */
+  [data-theme="dark"] {
     --ink:#f3f3f1; --ink-2:#9a9a98; --ink-3:#5f5f5d; --ink-4:#3a3a39;
     --line:#2a2a2a; --line-2:#1d1d1d; --bg:#0d0d0d; --bg-soft:#141414; --bg-card:#161616;
     --on-ink:#0d0d0d;
-    --ui:'Geist','-apple-system',system-ui,sans-serif;
-    --mono:'Geist Mono',ui-monospace,'SF Mono',monospace;
-    --max:1120px;
-    --r:18px; --r-sm:12px;
+    --nav-bg:rgba(13,13,13,.82);
+    --glow-a:rgba(255,255,255,.07); --glow-b:rgba(255,255,255,.025);
+    --stage-glow:rgba(255,255,255,.06);
+    --hover-border:#3a3a39; --hover-bg:#191919;
+    --feat-hover-border:#383838; --feat-hover-bg:#181818;
+    --ptrack-bg:#262626;
+    --closer-glow:rgba(255,255,255,.06);
+    --navadd-shadow:rgba(255,255,255,.16);
+    --pro-bg:linear-gradient(180deg,#1a1a1a,#131313); --pro-border:#3a3a39;
   }
+
   * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-  html { scroll-behavior:smooth; }
+  html { scroll-behavior:smooth; transition:background .3s, color .3s; }
   body {
     margin:0; background:var(--bg); color:var(--ink); font-family:var(--ui);
     -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
-    line-height:1.5; overflow-x:hidden;
+    line-height:1.5; overflow-x:hidden; transition:background .3s, color .3s;
   }
   a { color:inherit; text-decoration:none; }
   button { font-family:inherit; cursor:pointer; }
   .mono { font-family:var(--mono); font-variant-numeric:tabular-nums; letter-spacing:.02em; }
-  ::selection { background:#f3f3f1; color:#0d0d0d; }
+  ::selection { background:var(--ink); color:var(--on-ink); }
 
   /* atmospheric glow */
   .glow { position:fixed; inset:0; pointer-events:none; z-index:0;
     background:
-      radial-gradient(620px 420px at 50% -8%, rgba(255,255,255,.07), transparent 70%),
-      radial-gradient(900px 600px at 88% 8%, rgba(255,255,255,.025), transparent 65%);
+      radial-gradient(620px 420px at 50% -8%, var(--glow-a), transparent 70%),
+      radial-gradient(900px 600px at 88% 8%, var(--glow-b), transparent 65%);
   }
   .wrap { max-width:var(--max); margin:0 auto; padding:0 24px; position:relative; z-index:1; }
 
   /* ── nav ── */
-  nav { position:sticky; top:0; z-index:50; background:rgba(13,13,13,.72);
+  nav { position:sticky; top:0; z-index:50; background:var(--nav-bg);
     backdrop-filter:blur(14px) saturate(140%); -webkit-backdrop-filter:blur(14px) saturate(140%);
     border-bottom:1px solid transparent; transition:border-color .3s, background .3s; }
   nav.scrolled { border-bottom-color:var(--line); }
@@ -53,12 +79,22 @@
   .nav-links { display:flex; align-items:center; gap:32px; }
   .nav-links a.lk { font-size:14px; color:var(--ink-2); transition:color .18s; }
   .nav-links a.lk:hover { color:var(--ink); }
+  .nav-right { display:flex; align-items:center; gap:10px; }
   .nav-cta { font-size:13.5px; font-weight:560; padding:8px 15px; border-radius:9px;
     background:var(--ink); color:var(--on-ink); border:1px solid var(--ink);
     transition:transform .16s cubic-bezier(.34,1.3,.5,1), opacity .18s; }
   .nav-cta:hover { opacity:.88; }
   .nav-cta:active { transform:scale(.96); }
-  .nav-toggle { display:none; }
+
+  /* ── theme toggle ── */
+  .theme-toggle { width:34px; height:34px; border-radius:9px; border:1px solid var(--line);
+    background:var(--bg-soft); color:var(--ink-2); display:flex; align-items:center;
+    justify-content:center; transition:border-color .2s, background .2s, color .2s; padding:0; }
+  .theme-toggle:hover { border-color:var(--hover-border); color:var(--ink); }
+  .icon-sun { display:none; }
+  .icon-moon { display:block; }
+  [data-theme="dark"] .icon-sun { display:block; }
+  [data-theme="dark"] .icon-moon { display:none; }
 
   /* ── hero ── */
   .hero { padding:84px 0 0; position:relative; }
@@ -66,8 +102,8 @@
   .eyebrow { display:inline-flex; align-items:center; gap:8px; font-size:12px; letter-spacing:.02em;
     color:var(--ink-2); border:1px solid var(--line); background:var(--bg-soft);
     padding:5px 12px 5px 9px; border-radius:99px; margin-bottom:26px; }
-  .eyebrow .dot { width:6px; height:6px; border-radius:50%; background:#f3f3f1;
-    box-shadow:0 0 0 3px rgba(243,243,241,.14); }
+  .eyebrow .dot { width:6px; height:6px; border-radius:50%; background:var(--ink);
+    box-shadow:0 0 0 3px color-mix(in srgb, var(--ink) 14%, transparent); }
   h1 { font-size:clamp(40px, 5.6vw, 66px); line-height:1.02; letter-spacing:-.035em;
     font-weight:700; margin:0 0 22px; text-wrap:balance; }
   h1 .muted { color:var(--ink-3); }
@@ -77,7 +113,7 @@
   .store-btn { display:inline-flex; align-items:center; gap:11px; padding:12px 18px 12px 16px;
     border-radius:13px; border:1px solid var(--line); background:var(--bg-card); color:var(--ink);
     transition:transform .16s cubic-bezier(.34,1.3,.5,1), border-color .2s, background .2s; }
-  .store-btn:hover { border-color:#3a3a39; background:#191919; }
+  .store-btn:hover { border-color:var(--hover-border); background:var(--hover-bg); }
   .store-btn:active { transform:scale(.975); }
   .store-btn.primary { background:var(--ink); color:var(--on-ink); border-color:var(--ink); }
   .store-btn.primary:hover { opacity:.9; background:var(--ink); }
@@ -94,7 +130,7 @@
   /* ── phone frame ── */
   .stage { position:relative; display:flex; justify-content:center; align-items:center; min-height:560px; }
   .stage::before { content:''; position:absolute; width:340px; height:340px; border-radius:50%;
-    background:radial-gradient(circle, rgba(255,255,255,.06), transparent 68%); filter:blur(6px); }
+    background:radial-gradient(circle, var(--stage-glow), transparent 68%); filter:blur(6px); }
   .phone { position:relative; width:284px; border-radius:42px; background:#000;
     border:1px solid #232323; padding:9px;
     box-shadow:0 40px 80px -30px rgba(0,0,0,.9), 0 0 0 1px rgba(255,255,255,.03) inset,
@@ -133,12 +169,12 @@
   .icard-blurb { font-size:12.5px; color:var(--ink-2); margin-top:3px; line-height:1.3;
     overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .pbar { display:flex; align-items:center; gap:10px; margin-top:11px; }
-  .ptrack { flex:1; height:3px; background:#262626; border-radius:99px; overflow:hidden; }
+  .ptrack { flex:1; height:3px; background:var(--ptrack-bg); border-radius:99px; overflow:hidden; }
   .pfill { height:100%; background:var(--ink); border-radius:99px; }
   .pcount { font-size:11px; color:var(--ink-2); flex-shrink:0; }
   .icard-meta { font-size:11.5px; color:var(--ink-3); margin-top:10px; }
 
-  /* floating bottom nav (pill + separate add) */
+  /* floating bottom nav */
   .navbar { flex-shrink:0; display:flex; align-items:center; gap:12px; padding:10px 16px 20px; }
   .navpill { flex:1; display:flex; align-items:center; justify-content:space-around;
     background:var(--bg-soft); border:1px solid var(--line); border-radius:99px; padding:11px 8px; }
@@ -146,7 +182,7 @@
   .navpill .ni.on { color:var(--ink); }
   .navadd { width:48px; height:48px; flex-shrink:0; border-radius:50%; background:var(--ink);
     color:var(--on-ink); display:flex; align-items:center; justify-content:center;
-    box-shadow:0 0 22px rgba(255,255,255,.16); }
+    box-shadow:0 8px 20px var(--navadd-shadow); }
 
   /* back phone: Schedule screen */
   .cal { background:var(--bg-card); border:1px solid var(--line); border-radius:18px; padding:14px 13px 16px; margin-top:2px; }
@@ -191,7 +227,7 @@
   .feat { background:var(--bg-card); border:1px solid var(--line); border-radius:var(--r);
     padding:26px 24px 28px; position:relative; overflow:hidden;
     transition:border-color .25s, transform .25s, background .25s; }
-  .feat:hover { border-color:#383838; transform:translateY(-3px); background:#181818; }
+  .feat:hover { border-color:var(--feat-hover-border); transform:translateY(-3px); background:var(--feat-hover-bg); }
   .feat-ic { width:44px; height:44px; border-radius:12px; background:var(--bg-soft); border:1px solid var(--line);
     display:flex; align-items:center; justify-content:center; margin-bottom:46px; color:var(--ink); }
   .feat h3 { font-size:19px; font-weight:600; letter-spacing:-.02em; margin:0 0 9px; }
@@ -215,14 +251,13 @@
   .price-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:18px; max-width:760px; }
   .tier { border:1px solid var(--line); border-radius:var(--r); padding:30px 28px 32px; background:var(--bg-card);
     display:flex; flex-direction:column; }
-  .tier.pro { background:linear-gradient(180deg, #1a1a1a, #131313); border-color:#3a3a39; position:relative; }
+  .tier.pro { background:var(--pro-bg); border-color:var(--pro-border); position:relative; }
   .tier-tag { position:absolute; top:24px; right:24px; font-size:10.5px; letter-spacing:.06em;
     text-transform:uppercase; color:var(--on-ink); background:var(--ink); padding:4px 10px; border-radius:99px; font-weight:600; }
   .tier-name { font-size:15px; font-weight:600; letter-spacing:-.01em; margin:0 0 14px; color:var(--ink); }
   .price { display:flex; align-items:baseline; gap:4px; margin-bottom:6px; }
   .price .amt { font-size:42px; font-weight:700; letter-spacing:-.04em; }
   .price .per { font-size:14px; color:var(--ink-2); }
-  .tier-blurb { font-size:13.5px; color:var(--ink-3); margin:0 0 24px; }
   .tier-list { list-style:none; margin:0 0 28px; padding:0; display:flex; flex-direction:column; gap:13px; flex:1; }
   .tier-list li { display:flex; gap:11px; align-items:flex-start; font-size:14.5px; color:var(--ink); }
   .tier-list .ck { width:19px; height:19px; flex-shrink:0; border-radius:50%; margin-top:1px;
@@ -231,14 +266,15 @@
   .tier-btn { padding:13px; border-radius:11px; font-size:14.5px; font-weight:600; text-align:center;
     border:1px solid var(--line); background:var(--bg-soft); color:var(--ink);
     transition:transform .16s cubic-bezier(.34,1.3,.5,1), border-color .2s, background .2s; }
-  .tier-btn:hover { border-color:#3a3a39; background:#191919; }
+  .tier-btn:hover { border-color:var(--hover-border); background:var(--hover-bg); }
   .tier.pro .tier-btn { background:var(--ink); color:var(--on-ink); border-color:var(--ink); }
   .tier.pro .tier-btn:hover { opacity:.9; background:var(--ink); }
   .tier-btn:active { transform:scale(.98); }
+  .tier-note { font-size:13.5px; color:var(--ink-3); text-align:center; margin:0; padding:13px 0 0; }
 
   /* ── closing cta ── */
   .closer { border:1px solid var(--line); border-radius:24px; background:
-      radial-gradient(700px 300px at 50% 0%, rgba(255,255,255,.06), transparent 70%), var(--bg-card);
+      radial-gradient(700px 300px at 50% 0%, var(--closer-glow), transparent 70%), var(--bg-card);
     padding:68px 40px; text-align:center; overflow:hidden; }
   .closer h2 { margin-bottom:14px; }
   .closer .sec-lede { margin:0 auto 32px; }
@@ -301,6 +337,14 @@
         <a class="lk" href="#features">Features</a>
         <a class="lk" href="#how">How it works</a>
         <a class="lk" href="#pricing">Pricing</a>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+          <!-- sun (shown in dark mode) -->
+          <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          <!-- moon (shown in light mode) -->
+          <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
         <a class="nav-cta" href="#download">Download</a>
       </div>
     </div>
@@ -320,7 +364,7 @@
               <span class="store-txt"><small>Download on the</small><span>App Store</span></span>
             </a>
             <a class="store-btn" href="#" aria-label="Get it on Google Play">
-              <svg width="19" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.6 2.2c-.25.27-.4.68-.4 1.22v17.16c0 .54.15.95.4 1.22l.06.05L13.4 12.1v-.2L3.66 2.15z" fill="#f3f3f1"/><path d="M16.7 15.3l-3.3-3.3v-.2l3.3-3.3.08.04 3.9 2.22c1.12.63 1.12 1.67 0 2.31l-3.9 2.22z" fill="#f3f3f1" opacity=".82"/><path d="M16.78 15.26 13.4 11.9l-9.8 9.85c.37.39.98.44 1.67.05z" fill="#f3f3f1" opacity=".62"/><path d="M16.78 8.54 5.27 2c-.69-.39-1.3-.34-1.67.05l9.8 9.85z" fill="#f3f3f1"/></svg>
+              <svg width="19" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.6 2.2c-.25.27-.4.68-.4 1.22v17.16c0 .54.15.95.4 1.22l.06.05L13.4 12.1v-.2L3.66 2.15z" fill="currentColor"/><path d="M16.7 15.3l-3.3-3.3v-.2l3.3-3.3.08.04 3.9 2.22c1.12.63 1.12 1.67 0 2.31l-3.9 2.22z" fill="currentColor" opacity=".82"/><path d="M16.78 15.26 13.4 11.9l-9.8 9.85c.37.39.98.44 1.67.05z" fill="currentColor" opacity=".62"/><path d="M16.78 8.54 5.27 2c-.69-.39-1.3-.34-1.67.05l9.8 9.85z" fill="currentColor"/></svg>
               <span class="store-txt"><small>Get it on</small><span>Google Play</span></span>
             </a>
           </div>
@@ -329,7 +373,7 @@
 
         <!-- phone mockups -->
         <div class="stage rv">
-          <!-- back: chat -->
+          <!-- back: schedule screen -->
           <div class="phone back" aria-hidden="true">
             <div class="screen">
               <div class="notch"></div>
@@ -556,7 +600,7 @@
             <li><span class="ck"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Visual calendar view</li>
             <li><span class="ck"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Activity and budget analytics</li>
           </ul>
-          <p style="text-align:center;font-size:13px;opacity:.5;padding:13px 0 0;">Upgrade inside the app after download.</p>
+          <p class="tier-note">Upgrade inside the app after download.</p>
         </div>
       </div>
     </div>
@@ -575,7 +619,7 @@
             <span class="store-txt"><small>Download on the</small><span>App Store</span></span>
           </a>
           <a class="store-btn" href="#" aria-label="Get it on Google Play">
-            <svg width="19" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.6 2.2c-.25.27-.4.68-.4 1.22v17.16c0 .54.15.95.4 1.22l.06.05L13.4 12.1v-.2L3.66 2.15z" fill="#f3f3f1"/><path d="M16.7 15.3l-3.3-3.3v-.2l3.3-3.3.08.04 3.9 2.22c1.12.63 1.12 1.67 0 2.31l-3.9 2.22z" fill="#f3f3f1" opacity=".82"/><path d="M16.78 15.26 13.4 11.9l-9.8 9.85c.37.39.98.44 1.67.05z" fill="#f3f3f1" opacity=".62"/><path d="M16.78 8.54 5.27 2c-.69-.39-1.3-.34-1.67.05l9.8 9.85z" fill="#f3f3f1"/></svg>
+            <svg width="19" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.6 2.2c-.25.27-.4.68-.4 1.22v17.16c0 .54.15.95.4 1.22l.06.05L13.4 12.1v-.2L3.66 2.15z" fill="currentColor"/><path d="M16.7 15.3l-3.3-3.3v-.2l3.3-3.3.08.04 3.9 2.22c1.12.63 1.12 1.67 0 2.31l-3.9 2.22z" fill="currentColor" opacity=".82"/><path d="M16.78 15.26 13.4 11.9l-9.8 9.85c.37.39.98.44 1.67.05z" fill="currentColor" opacity=".62"/><path d="M16.78 8.54 5.27 2c-.69-.39-1.3-.34-1.67.05l9.8 9.85z" fill="currentColor"/></svg>
             <span class="store-txt"><small>Get it on</small><span>Google Play</span></span>
           </a>
         </div>
@@ -618,15 +662,28 @@
   </footer>
 
   <script>
-    // nav border on scroll
+    // ── theme toggle ──
+    const html = document.documentElement;
+    const btn = document.getElementById('themeToggle');
+    const saved = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initial = saved || (prefersDark ? 'dark' : 'light');
+    html.setAttribute('data-theme', initial);
+    btn.addEventListener('click', () => {
+      const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+    });
+
+    // ── nav border on scroll ──
     const nav = document.getElementById('nav');
     const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 8);
     onScroll();
     window.addEventListener('scroll', onScroll, { passive:true });
 
-    // scroll reveal
+    // ── scroll reveal ──
     const io = new IntersectionObserver((entries) => {
-      entries.forEach((e, i) => {
+      entries.forEach((e) => {
         if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
       });
     }, { threshold:0.12, rootMargin:'0px 0px -8% 0px' });

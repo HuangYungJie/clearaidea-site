@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>ClearAIdea — Shared Plan</title>
+
+  <!-- Social link preview (generic brand image; per-plan images can come later) -->
+  <meta property="og:title" content="A plan shared with ClearAIdea" />
+  <meta property="og:description" content="Open this plan in ClearAIdea and start tracking it." />
+  <meta property="og:image" content="https://clearaidea.com/og-share.png" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <style>
+    :root {
+      --ink: #171717; --ink2: #6f6f6f; --ink3: #a8a8a8;
+      --line: #ededed; --bg: #f6f6f6; --card: #ffffff;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      margin: 0; background: var(--bg); color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      padding: 24px 16px 48px;
+    }
+    .wrap { max-width: 420px; margin: 0 auto; }
+    .card {
+      background: var(--card); border-radius: 16px; padding: 22px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+    .cardHeader { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 14px; }
+    .emoji { font-size: 36px; line-height: 42px; }
+    .title { font-size: 20px; font-weight: 700; letter-spacing: -0.4px; line-height: 26px; margin: 0; }
+    .sub { font-size: 12px; color: var(--ink2); font-weight: 500; margin-top: 4px; }
+    .divider { height: 1.5px; background: var(--ink); margin: 14px 0; }
+    .phaseDivider { height: 1px; background: var(--line); margin: 10px 0; }
+    .phaseHeader { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; gap: 8px; }
+    .phaseTitle { font-size: 13px; font-weight: 700; letter-spacing: -0.1px; }
+    .phaseMeta { font-size: 11px; color: var(--ink2); font-weight: 600; white-space: nowrap; }
+    .task { display: flex; align-items: flex-start; gap: 6px; padding: 3px 0 3px 4px; }
+    .box { font-size: 12px; color: var(--ink3); width: 14px; }
+    .taskTitle { font-size: 12px; flex: 1; line-height: 18px; }
+    .taskMeta { font-size: 10px; color: var(--ink2); font-weight: 500; white-space: nowrap; }
+    .dots { font-size: 9px; color: var(--ink3); font-weight: 800; }
+    .footerTotals { display: flex; gap: 12px; margin-top: 2px; }
+    .footerVal { font-size: 13px; font-weight: 700; }
+    .cta { margin-top: 22px; text-align: center; }
+    .ctaText { font-size: 14px; color: var(--ink2); margin-bottom: 14px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--ink); color: #fff; text-decoration: none;
+      font-weight: 700; font-size: 16px; border-radius: 14px;
+      padding: 14px 20px; width: 100%; max-width: 320px; margin: 6px auto;
+    }
+    .stores { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 12px; }
+    .stores a img { height: 44px; }
+    .state { text-align: center; color: var(--ink2); padding: 60px 0; font-size: 15px; }
+    .brand { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 28px; color: var(--ink3); font-size: 12px; font-weight: 700; letter-spacing: 0.5px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div id="content"><div class="state">Loading plan…</div></div>
+    <div class="brand">💡 ClearAIdea</div>
+  </div>
+
+  <script>
+    // --- Config -------------------------------------------------------------
+    var SUPABASE_URL = "https://lujqmslhzcqphquajgmv.supabase.co";
+    // Public anon key (safe to embed — same one the app ships). Paste the value
+    // of EXPO_PUBLIC_SUPABASE_ANON_KEY here.
+    var SUPABASE_ANON_KEY = "sb_publishable_VzywGtjH9Lq-B6fCcdzHZg_-_fzlbrX";
+    var APP_STORE_URL = "https://apps.apple.com/app/idXXXXXXXXXX";
+    var PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.clearaidea.app";
+    // -----------------------------------------------------------------------
+
+    function getCode() {
+      var q = new URLSearchParams(location.search);
+      if (q.get("c")) return q.get("c");
+      var m = location.pathname.match(/\/p\/([A-Za-z0-9]+)/);
+      return m ? m[1] : null;
+    }
+
+    function esc(s) {
+      return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+      });
+    }
+    function fmtH(h) { return h ? (Math.round(h * 10) / 10) + "h" : ""; }
+    function fmtB(b) { return b ? "$" + Number(b).toLocaleString() : ""; }
+    function dots(p) { return p === 3 ? "!!!" : p === 2 ? "!!" : p === 1 ? "!" : ""; }
+
+    function render(plan) {
+      var totalH = 0, totalB = 0, taskCount = 0;
+      (plan.phases || []).forEach(function (ph) {
+        (ph.tasks || []).forEach(function (t) {
+          totalH += t.estimatedHours || 0; totalB += t.estimatedBudget || 0; taskCount++;
+        });
+      });
+      var html = '<div class="card">';
+      html += '<div class="cardHeader"><div class="emoji">' + esc(plan.emoji || "💡") + '</div>';
+      html += '<div><h1 class="title">' + esc(plan.title) + '</h1>';
+      html += '<div class="sub">' + (plan.phases || []).length + ' phases · ' + taskCount + ' tasks' +
+              (totalH ? ' · ' + fmtH(totalH) : '') + (totalB ? ' · ' + fmtB(totalB) : '') + '</div></div></div>';
+      html += '<div class="divider"></div>';
+      (plan.phases || []).forEach(function (ph, i) {
+        var ph_h = 0, ph_b = 0;
+        (ph.tasks || []).forEach(function (t) { ph_h += t.estimatedHours || 0; ph_b += t.estimatedBudget || 0; });
+        html += '<div class="phaseHeader"><div class="phaseTitle">' + esc(ph.title) + '</div>';
+        html += '<div class="phaseMeta">' + [fmtH(ph_h), fmtB(ph_b)].filter(Boolean).join(' · ') + '</div></div>';
+        (ph.tasks || []).forEach(function (t) {
+          html += '<div class="task"><div class="box">☐</div><div class="taskTitle">' + esc(t.title) + '</div>';
+          var meta = [dots(t.priority), fmtH(t.estimatedHours), fmtB(t.estimatedBudget)].filter(Boolean).join('  ');
+          html += '<div class="taskMeta">' + esc(meta) + '</div></div>';
+        });
+        if (i < (plan.phases || []).length - 1) html += '<div class="phaseDivider"></div>';
+      });
+      html += '<div class="divider"></div>';
+      html += '<div class="footerTotals">' + (totalH ? '<span class="footerVal">⏱ ' + fmtH(totalH) + '</span>' : '') +
+              (totalB ? '<span class="footerVal">💰 ' + fmtB(totalB) + '</span>' : '') + '</div>';
+      html += '</div>'; // card
+
+      html += '<div class="cta"><div class="ctaText">Add this plan to your ClearAIdea and start tracking it.</div>';
+      html += '<a class="btn" href="clearaidea://p/?c=' + esc(getCode()) + '">Open in ClearAIdea</a>';
+      html += '<div class="stores">';
+      html += '<a href="' + APP_STORE_URL + '">App Store</a> · <a href="' + PLAY_STORE_URL + '">Google Play</a>';
+      html += '</div></div>';
+
+      document.getElementById("content").innerHTML = html;
+    }
+
+    function showState(msg) {
+      document.getElementById("content").innerHTML = '<div class="state">' + esc(msg) + '</div>';
+    }
+
+    (function () {
+      var code = getCode();
+      if (!code) { showState("No plan code in this link."); return; }
+      fetch(SUPABASE_URL + "/functions/v1/share-plan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "apikey": SUPABASE_ANON_KEY, "Authorization": "Bearer " + SUPABASE_ANON_KEY },
+        body: JSON.stringify({ op: "get", code: code })
+      })
+        .then(function (r) {
+          if (r.status === 404) throw new Error("not_found");
+          if (!r.ok) throw new Error("error");
+          return r.json();
+        })
+        .then(function (j) {
+          if (!j || !j.data) throw new Error("not_found");
+          render(j.data);
+        })
+        .catch(function (e) {
+          showState(e.message === "not_found" ? "This shared plan is no longer available." : "Couldn't load this plan. Please try again.");
+        });
+    })();
+  </script>
+</body>
+</html>

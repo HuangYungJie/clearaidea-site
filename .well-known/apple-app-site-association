@@ -1,0 +1,11 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "92G3BY75XJ.com.clearaidea.app",
+        "paths": ["/p/*", "/p/", "/p"]
+      }
+    ]
+  }
+}

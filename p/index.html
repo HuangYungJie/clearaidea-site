@@ -89,6 +89,7 @@
     function fmtH(h) { return h ? (Math.round(h * 10) / 10) + "h" : ""; }
     function fmtB(b) { return b ? "$" + Number(b).toLocaleString() : ""; }
     function dots(p) { return p === 3 ? "!!!" : p === 2 ? "!!" : p === 1 ? "!" : ""; }
+    function fmtD(d) { var m = /^\d{4}-(\d{2})-(\d{2})$/.exec(d || ""); return m ? (+m[1]) + "/" + (+m[2]) : ""; }
 
     function render(plan) {
       var totalH = 0, totalB = 0, taskCount = 0;
@@ -110,7 +111,7 @@
         html += '<div class="phaseMeta">' + [fmtH(ph_h), fmtB(ph_b)].filter(Boolean).join(' · ') + '</div></div>';
         (ph.tasks || []).forEach(function (t) {
           html += '<div class="task"><div class="box">☐</div><div class="taskTitle">' + esc(t.title) + '</div>';
-          var meta = [dots(t.priority), fmtH(t.estimatedHours), fmtB(t.estimatedBudget)].filter(Boolean).join('  ');
+          var meta = [fmtD(t.due), dots(t.priority), fmtH(t.estimatedHours), fmtB(t.estimatedBudget)].filter(Boolean).join('  ');
           html += '<div class="taskMeta">' + esc(meta) + '</div></div>';
         });
         if (i < (plan.phases || []).length - 1) html += '<div class="phaseDivider"></div>';
